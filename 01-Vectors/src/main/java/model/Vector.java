@@ -51,6 +51,15 @@ public class Vector {
         return str.toString();
     }
 
+    /**
+     * 获取零向量
+     * @author show
+     */
+    public static Vector zero(int dim) {
+
+        return new Vector(new int[dim]);
+    }
+
     @Override
     public String toString() {
 
@@ -148,7 +157,4 @@ public class Vector {
         return self.length;
     }
 
-    public static void main(String[] args) {
-
-    }
 }

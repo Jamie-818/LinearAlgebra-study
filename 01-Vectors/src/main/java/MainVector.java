@@ -26,5 +26,10 @@ public class MainVector {
         System.out.println("+" + vec1.print() + "=" + vec1.pos().print());
         //获取向量取负
         System.out.println("-" + vec1.print() + "=" + vec1.neg().print());
+        //获取二维零向量
+        Vector zero2 = Vector.zero(2);
+        System.out.println(zero2.print());
+        //任何向量加零向量都等于他本身
+        System.out.println(vec1.print() + "+" + zero2.print() + "=" + vec1.add(zero2).print());
     }
 }
