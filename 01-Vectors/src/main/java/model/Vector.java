@@ -1,5 +1,7 @@
 package model;
 
+import utils.DoubleUtils;
+
 import java.util.Arrays;
 import java.util.StringJoiner;
 
@@ -8,13 +10,13 @@ import java.util.StringJoiner;
  * @author show
  */
 public class Vector {
-    private int[] self;
+    private Object[] self;
 
     /**
      * 构造函数
      * @author show
      */
-    public Vector(int[] self) {
+    public Vector(Object[] self) {
 
         this.self = self;
     }
@@ -24,9 +26,9 @@ public class Vector {
      * @author xuanweiyao
      * @date 11:30 2019/6/20
      */
-    private Vector copy(int[] self) {
+    private Vector copy(Object[] self) {
 
-        int[] selfCopy = new int[self.length];
+        Object[] selfCopy = new Object[self.length];
         System.arraycopy(self, 0, selfCopy, 0, selfCopy.length);
         return new Vector(selfCopy);
 
@@ -57,7 +59,42 @@ public class Vector {
      */
     public static Vector zero(int dim) {
 
-        return new Vector(new int[dim]);
+        Object[] objects = new Object[dim];
+        for (int i = 0; i < objects.length; i++) {
+            objects[i] = 0;
+        }
+        return new Vector(objects);
+    }
+
+    /**
+     * 求一个向量的模
+     * @author show
+     */
+    public double norm() {
+
+        Object[] selfArray = copy(self).self;
+        double count = 0;
+        for (Object i : selfArray) {
+            count += Math.pow(Double.parseDouble(i.toString()), 2);
+        }
+        return Math.sqrt(count);
+    }
+
+    /**
+     * 求一个向量的单位向量
+     * @author show
+     */
+    public Vector normalize() {
+
+        Vector vector = copy(self);
+        int size = vector.length();
+        Object[] normalize = new Object[size];
+        for (int i = 0; i < size; i++) {
+            double norm = vector.norm();
+            double v = Double.parseDouble(vector.self[i].toString());
+            normalize[i] = 1.0 / norm * v;
+        }
+        return new Vector(normalize);
     }
 
     @Override
@@ -72,33 +109,38 @@ public class Vector {
      * 向量加法
      * @author show
      */
-    public Vector add(Vector vector) {
+    public static Vector add(Vector vec1, Vector vec2) {
 
-        if (self.length != vector.length()) {
+        int vec1Size = vec1.length();
+        int vec2Size = vec2.length();
+        if (vec1Size != vec2Size) {
             throw new RuntimeException("两个向量的维度不一致，无法计算");
         }
-        Vector vectorCopy = copy(self);
-        int[] self = this.self;
-        for (int i = 0; i < this.self.length; i++) {
-            vectorCopy.self[i] += vector.self[i];
+        Vector vector = new Vector(new Object[vec1Size]);
+        for (int i = 0; i < vec1Size; i++) {
+            double count = Double.parseDouble(vec1.self[i].toString()) + Double.parseDouble(vec2.self[i].toString());
+            vector.self[i] = DoubleUtils.doubleByInt(count);
         }
-        return new Vector(self);
+        return vector;
     }
 
     /**
      * 向量减法
      * @author show
      */
-    public Vector sub(Vector vector) {
+    public static Vector sub(Vector vec1, Vector vec2) {
 
-        if (self.length != vector.length()) {
+        int vec1Size = vec1.length();
+        int vec2Size = vec2.length();
+        if (vec1Size != vec2Size) {
             throw new RuntimeException("两个向量的维度不一致，无法计算");
         }
-        Vector vectorCopy = copy(self);
-        for (int i = 0; i < self.length; i++) {
-            vectorCopy.self[i] -= vector.self[i];
+        Vector vector = new Vector(new Object[vec1Size]);
+        for (int i = 0; i < vec1Size; i++) {
+            double count = Double.parseDouble(vec1.self[i].toString()) - Double.parseDouble(vec2.self[i].toString());
+            vector.self[i] = DoubleUtils.doubleByInt(count);
         }
-        return vectorCopy;
+        return vector;
     }
 
     /**
@@ -107,11 +149,10 @@ public class Vector {
      */
     public Vector mul(int k) {
 
-        Vector vectorCopy = copy(self);
         for (int i = 0; i < self.length; i++) {
-            vectorCopy.self[i] *= k;
+            self[i] = DoubleUtils.doubleByInt((Double.parseDouble(self[i].toString())) * k);
         }
-        return vectorCopy;
+        return new Vector(self);
     }
 
     /**
@@ -121,6 +162,7 @@ public class Vector {
     public Vector pos() {
 
         return copy(self);
+
     }
 
     /**
@@ -129,18 +171,18 @@ public class Vector {
      */
     public Vector neg() {
 
-        Vector vectorCopy = copy(self);
-        for (int i = 0; i < vectorCopy.self.length; i++) {
-            vectorCopy.self[i] *= -1;
+        Vector vec = copy(self);
+        for (int i = 0; i < vec.length(); i++) {
+            vec.self[i] = DoubleUtils.doubleByInt((Double.parseDouble(self[i].toString())) * -1);
         }
-        return vectorCopy;
+        return vec;
     }
 
     /**
      * 取向量的第Index个元素
      * @author show
      */
-    public int getItem(int index) {
+    public Object getItem(int index) {
 
         if (index > self.length) {
             throw new RuntimeException("查询的下标超过向量的维度");
@@ -158,3 +200,4 @@ public class Vector {
     }
 
 }
+
