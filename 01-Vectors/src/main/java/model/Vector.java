@@ -26,6 +26,10 @@ public class Vector {
         System.arraycopy(numbers, 0, this.self, 0, numbers.length);
     }
 
+    /**
+     * 构造函数(浮点数)
+     * @author show
+     */
     public Vector(int... numbers) {
 
         self = new Object[numbers.length];
@@ -34,6 +38,10 @@ public class Vector {
         }
     }
 
+    /**
+     * 构造函数(整数)
+     * @author show
+     */
     public Vector(double... numbers) {
 
         self = new Object[numbers.length];
