@@ -1,5 +1,8 @@
 package model;
 
+import common.Global;
+import exception.VectorLengthError;
+import exception.ZeroDivisionError;
 import utils.DoubleUtils;
 
 import java.util.Arrays;
@@ -14,11 +17,26 @@ public class Vector {
 
     /**
      * 构造函数
+     * 根据向量数值数量
      * @author show
      */
-    public Vector(Object[] self) {
+    public Vector(Object... numbers) {
 
-        this.self = self;
+        this.self = numbers;
+    }
+
+    /**
+     * 构造函数
+     * 根据向量长度，也是获取零向量
+     * @author show
+     */
+    public Vector(int size) {
+
+        this.self = new Object[size];
+        for (int i = 0; i < size; i++) {
+            this.self[i] = 0;
+        }
+
     }
 
     /**
@@ -54,19 +72,6 @@ public class Vector {
     }
 
     /**
-     * 获取零向量
-     * @author show
-     */
-    public static Vector zero(int dim) {
-
-        Object[] objects = new Object[dim];
-        for (int i = 0; i < objects.length; i++) {
-            objects[i] = 0;
-        }
-        return new Vector(objects);
-    }
-
-    /**
      * 求一个向量的模
      * @author show
      */
@@ -84,17 +89,19 @@ public class Vector {
      * 求一个向量的单位向量
      * @author show
      */
-    public Vector normalize() {
+    public Vector normalize() throws ZeroDivisionError {
 
-        Vector vector = copy(self);
-        int size = vector.length();
-        Object[] normalize = new Object[size];
-        for (int i = 0; i < size; i++) {
-            double norm = vector.norm();
-            double v = Double.parseDouble(vector.self[i].toString());
-            normalize[i] = 1.0 / norm * v;
+        Vector copyVec = copy(self);
+        double norm = copyVec.norm();
+        //判断模是否为0，因为任何数不能除0，因为double精度问题，我们要让它少于1e-8(一个非常小的数)
+        if (norm < Global.EPSILON) {
+            throw new ZeroDivisionError("normalize error，norm is zero");
         }
-        return new Vector(normalize);
+        for (int i = 0; i < copyVec.length(); i++) {
+            double v = Double.parseDouble(copyVec.self[i].toString());
+            copyVec.self[i] = 1.0 / norm * v;
+        }
+        return copyVec;
     }
 
     @Override
@@ -109,14 +116,14 @@ public class Vector {
      * 向量加法
      * @author show
      */
-    public static Vector add(Vector vec1, Vector vec2) {
+    public static Vector add(Vector vec1, Vector vec2) throws RuntimeException {
 
         int vec1Size = vec1.length();
         int vec2Size = vec2.length();
         if (vec1Size != vec2Size) {
-            throw new RuntimeException("两个向量的维度不一致，无法计算");
+            throw new VectorLengthError("两个向量的维度不一致，无法计算");
         }
-        Vector vector = new Vector(new Object[vec1Size]);
+        Vector vector = new Vector(vec1Size);
         for (int i = 0; i < vec1Size; i++) {
             double count = Double.parseDouble(vec1.self[i].toString()) + Double.parseDouble(vec2.self[i].toString());
             vector.self[i] = DoubleUtils.doubleByInt(count);
@@ -133,9 +140,9 @@ public class Vector {
         int vec1Size = vec1.length();
         int vec2Size = vec2.length();
         if (vec1Size != vec2Size) {
-            throw new RuntimeException("两个向量的维度不一致，无法计算");
+            throw new VectorLengthError("两个向量的维度不一致，无法计算");
         }
-        Vector vector = new Vector(new Object[vec1Size]);
+        Vector vector = new Vector(vec1Size);
         for (int i = 0; i < vec1Size; i++) {
             double count = Double.parseDouble(vec1.self[i].toString()) - Double.parseDouble(vec2.self[i].toString());
             vector.self[i] = DoubleUtils.doubleByInt(count);
@@ -144,15 +151,53 @@ public class Vector {
     }
 
     /**
+     * 向量点乘
+     * @date 10:57 2019/6/20
+     */
+    public static Object dot(Vector vec1, Vector vec2) {
+
+        int vec1Size = vec1.length();
+        int vec2Size = vec2.length();
+        if (vec1Size != vec2Size) {
+            throw new VectorLengthError("两个向量的维度不一致，无法计算");
+        }
+        double count = 0;
+        for (int i = 0; i < vec1Size; i++) {
+            count += Double.parseDouble(vec1.self[i].toString()) * Double.parseDouble(vec2.self[i].toString());
+
+        }
+        return DoubleUtils.doubleByInt(count);
+    }
+
+    /**
      * 向量乘法
      * @date 10:57 2019/6/20
      */
     public Vector mul(int k) {
 
-        for (int i = 0; i < self.length; i++) {
-            self[i] = DoubleUtils.doubleByInt((Double.parseDouble(self[i].toString())) * k);
+        Vector copyVec = copy(self);
+        Object[] copyVecSelf = copyVec.self;
+        for (int i = 0; i < copyVec.length(); i++) {
+            copyVecSelf[i] = DoubleUtils.doubleByInt((Double.parseDouble(copyVecSelf[i].toString())) * k);
         }
-        return new Vector(self);
+        return copyVec;
+    }
+
+    /**
+     * 向量除法
+     * @date 10:57 2019/6/20
+     */
+    public Vector div(int k) throws ZeroDivisionError {
+
+        if (k == 0) {
+            throw new ZeroDivisionError("div error，norm is zero");
+        }
+        Vector copyVec = copy(self);
+        Object[] copyVecSelf = copyVec.self;
+        for (int i = 0; i < copyVec.length(); i++) {
+            copyVecSelf[i] = DoubleUtils.doubleByInt((Double.parseDouble(copyVecSelf[i].toString())) / k);
+        }
+        return copyVec;
     }
 
     /**
@@ -182,7 +227,7 @@ public class Vector {
      * 取向量的第Index个元素
      * @author show
      */
-    public Object getItem(int index) {
+    public Object getItem(int index) throws RuntimeException {
 
         if (index > self.length) {
             throw new RuntimeException("查询的下标超过向量的维度");
