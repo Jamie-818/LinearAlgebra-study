@@ -9,6 +9,7 @@ public class MainVector {
     /** 向量初始化*/
     /** 二维向量：(5,2)*/
     private static Vector vec1 = new Vector(5, 2);
+
     /** 二维向量：(3,1)*/
     private static Vector vec2 = new Vector(3, 1);
     /** 二维零向量：(0,0)*/
@@ -92,5 +93,6 @@ public class MainVector {
         vector1();
         vector2();
         vector3();
+
     }
 }

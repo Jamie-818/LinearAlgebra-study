@@ -16,13 +16,30 @@ public class Vector {
     private Object[] self;
 
     /**
-     * 构造函数
+     * 私有构造函数
      * 根据向量数值数量
      * @author show
      */
-    public Vector(Object... numbers) {
+    private Vector(Object... numbers) {
 
-        this.self = numbers;
+        self = new Object[numbers.length];
+        System.arraycopy(numbers, 0, this.self, 0, numbers.length);
+    }
+
+    public Vector(int... numbers) {
+
+        self = new Object[numbers.length];
+        for (int i = 0; i < numbers.length; i++) {
+            this.self[i] = numbers[i];
+        }
+    }
+
+    public Vector(double... numbers) {
+
+        self = new Object[numbers.length];
+        for (int i = 0; i < numbers.length; i++) {
+            this.self[i] = DoubleUtils.doubleByInt(numbers[i]);
+        }
     }
 
     /**
