@@ -1,19 +1,18 @@
 package model;
 
-import common.Global;
 import exception.VectorLengthError;
 import exception.ZeroDivisionError;
-import utils.DoubleUtils;
 
-import java.util.Arrays;
-import java.util.StringJoiner;
 
 /**
  * 向量对象
  * @author show
  */
 public class Vector {
+    /**向量的底层结构*/
     private Object[] self;
+    /**一个无限接近于0的数*/
+    private static final double EPSILON = 1e-8;
 
     /**
      * 私有构造函数
@@ -46,7 +45,7 @@ public class Vector {
 
         self = new Object[numbers.length];
         for (int i = 0; i < numbers.length; i++) {
-            this.self[i] = DoubleUtils.doubleByInt(numbers[i]);
+            this.self[i] = doubleIsInt(numbers[i]);
         }
     }
 
@@ -65,16 +64,39 @@ public class Vector {
     }
 
     /**
-     * 复制一个 Vector 防止污染源对象
-     * @author xuanweiyao
-     * @date 11:30 2019/6/20
+     * 取向量的第Index个元素
+     * @author show
      */
-    private Vector copy(Object[] self) {
+    public Object getItem(int index) throws RuntimeException {
 
-        Object[] selfCopy = new Object[self.length];
-        System.arraycopy(self, 0, selfCopy, 0, selfCopy.length);
-        return new Vector(selfCopy);
+        if (index > self.length) {
+            throw new RuntimeException("查询的下标超过向量的维度");
+        }
+        return self[index];
+    }
 
+    /**
+     * 获取向量的维度
+     * @author show
+     */
+    public int length() {
+
+        return self.length;
+    }
+
+    /**
+     * 判断double是否没小数，是的话，返回int，否则返回自身
+     * @author show
+     * @param d 入参
+     * @return java.lang.Object
+     */
+    private static Object doubleIsInt(Double d) {
+
+        if (d % 1 == 0) {
+            return d.intValue();
+        } else {
+            return d;
+        }
     }
 
     /**
@@ -94,6 +116,89 @@ public class Vector {
         }
         str.append(")");
         return str.toString();
+    }
+
+
+
+    /**
+     * 复制一个 Vector 防止污染源对象
+     * @author show
+     * @date 11:30 2019/6/20
+     */
+    private Vector copy(Object[] self) {
+
+        Object[] selfCopy = new Object[self.length];
+        System.arraycopy(self, 0, selfCopy, 0, selfCopy.length);
+        return new Vector(selfCopy);
+    }
+
+    /**
+     * 向量加法
+     * @author show
+     */
+    public static Vector add(Vector vec1, Vector vec2) throws RuntimeException {
+
+        int vec1Size = vec1.length();
+        int vec2Size = vec2.length();
+        if (vec1Size != vec2Size) {
+            throw new VectorLengthError("两个向量的维度不一致，无法计算");
+        }
+        Vector vector = new Vector(vec1Size);
+        for (int i = 0; i < vec1Size; i++) {
+            double count = Double.parseDouble(vec1.self[i].toString()) + Double.parseDouble(vec2.self[i].toString());
+            vector.self[i] = doubleIsInt(count);
+        }
+        return vector;
+    }
+
+    /**
+     * 向量减法
+     * @author show
+     */
+    public static Vector sub(Vector vec1, Vector vec2) {
+
+        int vec1Size = vec1.length();
+        int vec2Size = vec2.length();
+        if (vec1Size != vec2Size) {
+            throw new VectorLengthError("两个向量的维度不一致，无法计算");
+        }
+        Vector vector = new Vector(vec1Size);
+        for (int i = 0; i < vec1Size; i++) {
+            double count = Double.parseDouble(vec1.self[i].toString()) - Double.parseDouble(vec2.self[i].toString());
+            vector.self[i] = doubleIsInt(count);
+        }
+        return vector;
+    }
+
+    /**
+     * 向量乘法
+     * @date 10:57 2019/6/20
+     */
+    public Vector mul(int k) {
+
+        Vector copyVec = copy(self);
+        Object[] copyVecSelf = copyVec.self;
+        for (int i = 0; i < copyVec.length(); i++) {
+            copyVecSelf[i] = doubleIsInt((Double.parseDouble(copyVecSelf[i].toString())) * k);
+        }
+        return copyVec;
+    }
+
+    /**
+     * 向量除法
+     * @date 10:57 2019/6/20
+     */
+    public Vector div(int k) throws ZeroDivisionError {
+
+        if (k == 0) {
+            throw new ZeroDivisionError("div error，norm is zero");
+        }
+        Vector copyVec = copy(self);
+        Object[] copyVecSelf = copyVec.self;
+        for (int i = 0; i < copyVec.length(); i++) {
+            copyVecSelf[i] = doubleIsInt((Double.parseDouble(copyVecSelf[i].toString())) / k);
+        }
+        return copyVec;
     }
 
     /**
@@ -119,7 +224,7 @@ public class Vector {
         Vector copyVec = copy(self);
         double norm = copyVec.norm();
         //判断模是否为0，因为任何数不能除0，因为double精度问题，我们要让它少于1e-8(一个非常小的数)
-        if (norm < Global.EPSILON) {
+        if (norm < EPSILON) {
             throw new ZeroDivisionError("normalize error，norm is zero");
         }
         for (int i = 0; i < copyVec.length(); i++) {
@@ -127,52 +232,6 @@ public class Vector {
             copyVec.self[i] = 1.0 / norm * v;
         }
         return copyVec;
-    }
-
-    @Override
-    public String toString() {
-
-        return new StringJoiner(", ", Vector.class.getSimpleName() + "(", ")")
-                .add(Arrays.toString(self))
-                .toString();
-    }
-
-    /**
-     * 向量加法
-     * @author show
-     */
-    public static Vector add(Vector vec1, Vector vec2) throws RuntimeException {
-
-        int vec1Size = vec1.length();
-        int vec2Size = vec2.length();
-        if (vec1Size != vec2Size) {
-            throw new VectorLengthError("两个向量的维度不一致，无法计算");
-        }
-        Vector vector = new Vector(vec1Size);
-        for (int i = 0; i < vec1Size; i++) {
-            double count = Double.parseDouble(vec1.self[i].toString()) + Double.parseDouble(vec2.self[i].toString());
-            vector.self[i] = DoubleUtils.doubleByInt(count);
-        }
-        return vector;
-    }
-
-    /**
-     * 向量减法
-     * @author show
-     */
-    public static Vector sub(Vector vec1, Vector vec2) {
-
-        int vec1Size = vec1.length();
-        int vec2Size = vec2.length();
-        if (vec1Size != vec2Size) {
-            throw new VectorLengthError("两个向量的维度不一致，无法计算");
-        }
-        Vector vector = new Vector(vec1Size);
-        for (int i = 0; i < vec1Size; i++) {
-            double count = Double.parseDouble(vec1.self[i].toString()) - Double.parseDouble(vec2.self[i].toString());
-            vector.self[i] = DoubleUtils.doubleByInt(count);
-        }
-        return vector;
     }
 
     /**
@@ -191,38 +250,7 @@ public class Vector {
             count += Double.parseDouble(vec1.self[i].toString()) * Double.parseDouble(vec2.self[i].toString());
 
         }
-        return DoubleUtils.doubleByInt(count);
-    }
-
-    /**
-     * 向量乘法
-     * @date 10:57 2019/6/20
-     */
-    public Vector mul(int k) {
-
-        Vector copyVec = copy(self);
-        Object[] copyVecSelf = copyVec.self;
-        for (int i = 0; i < copyVec.length(); i++) {
-            copyVecSelf[i] = DoubleUtils.doubleByInt((Double.parseDouble(copyVecSelf[i].toString())) * k);
-        }
-        return copyVec;
-    }
-
-    /**
-     * 向量除法
-     * @date 10:57 2019/6/20
-     */
-    public Vector div(int k) throws ZeroDivisionError {
-
-        if (k == 0) {
-            throw new ZeroDivisionError("div error，norm is zero");
-        }
-        Vector copyVec = copy(self);
-        Object[] copyVecSelf = copyVec.self;
-        for (int i = 0; i < copyVec.length(); i++) {
-            copyVecSelf[i] = DoubleUtils.doubleByInt((Double.parseDouble(copyVecSelf[i].toString())) / k);
-        }
-        return copyVec;
+        return doubleIsInt(count);
     }
 
     /**
@@ -243,31 +271,9 @@ public class Vector {
 
         Vector vec = copy(self);
         for (int i = 0; i < vec.length(); i++) {
-            vec.self[i] = DoubleUtils.doubleByInt((Double.parseDouble(self[i].toString())) * -1);
+            vec.self[i] = doubleIsInt((Double.parseDouble(self[i].toString())) * -1);
         }
         return vec;
     }
-
-    /**
-     * 取向量的第Index个元素
-     * @author show
-     */
-    public Object getItem(int index) throws RuntimeException {
-
-        if (index > self.length) {
-            throw new RuntimeException("查询的下标超过向量的维度");
-        }
-        return self[index];
-    }
-
-    /**
-     * 获取向量的维度
-     * @author show
-     */
-    public int length() {
-
-        return self.length;
-    }
-
 }
 

@@ -2,14 +2,13 @@ import exception.ZeroDivisionError;
 import model.Vector;
 
 /**
- * 向量测试类
+ * 向量验证类
  * @author show
  */
 public class MainVector {
     /** 向量初始化*/
     /** 二维向量：(5,2)*/
     private static Vector vec1 = new Vector(5, 2);
-
     /** 二维向量：(3,1)*/
     private static Vector vec2 = new Vector(3, 1);
     /** 二维零向量：(0,0)*/
@@ -20,9 +19,6 @@ public class MainVector {
      * @author show
      */
     private static void vector1() {
-        // 向量初始化
-        Vector vec1 = new Vector(5, 2);
-        Vector vec2 = new Vector(3, 1);
         // 打印向量
         System.out.println(vec1.print());
         // 向量维度
