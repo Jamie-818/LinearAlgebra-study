@@ -20,23 +20,23 @@ public class MainVector {
      */
     private static void vector1() {
         // 打印向量
-        System.out.println(vec1.print());
+        System.out.println(vec1);
         // 向量维度
         System.out.println(vec1.length());
         // 向量坐标值
         System.out.println("vec1[0]=" + vec1.getItem(0) + ",vec1[1]=" + vec1.getItem(1));
         //向量相加(5,2)+(3,1)
-        System.out.println(vec1.print() + "+" + vec2.print() + "=" + Vector.add(vec1, vec2).print());
+        System.out.println(vec1 + "+" + vec2 + "=" + Vector.add(vec1, vec2));
         //向量相减 (5,2)-(3,1)
-        System.out.println(vec1.print() + "-" + vec2.print() + "=" + Vector.sub(vec1, vec2).print());
+        System.out.println(vec1 + "-" + vec2 + "=" + Vector.sub(vec1, vec2));
         //向量乘法(5,2)*3
-        System.out.println(vec1.print() + "*" + 3 + "=" + vec1.mul(3).print());
+        System.out.println(vec1 + "*" + 3 + "=" + vec1.mul(3));
         //向量乘法(5,2)/3
-        System.out.println(vec1.print() + "/" + 3 + "=" + vec1.div(3).print());
+        System.out.println(vec1 + "/" + 3 + "=" + vec1.div(3));
         //获取向量取正
-        System.out.println("+" + vec1.print() + "=" + vec1.pos().print());
+        System.out.println("+" + vec1 + "=" + vec1.pos());
         //获取向量取负
-        System.out.println("-" + vec1.print() + "=" + vec1.neg().print());
+        System.out.println("-" + vec1 + "=" + vec1.neg());
     }
 
     /**
@@ -45,24 +45,24 @@ public class MainVector {
      */
     private static void vector2() {
         //二维零向量
-        System.out.println(zero2.print());
+        System.out.println(zero2);
         //任何向量加零向量都等于他本身
-        System.out.println(vec1.print() + "+" + zero2.print() + "=" + Vector.add(vec1, zero2).print());
+        System.out.println(vec1 + "+" + zero2 + "=" + Vector.add(vec1, zero2));
         //求 vec1 vec2 的模
-        System.out.println("norm(" + vec1.print() + ") = " + vec1.norm());
-        System.out.println("norm(" + vec2.print() + ") = " + vec2.norm());
-        System.out.println("norm(" + zero2.print() + ") = " + zero2.norm());
+        System.out.println("norm(" + vec1 + ") = " + vec1.norm());
+        System.out.println("norm(" + vec2 + ") = " + vec2.norm());
+        System.out.println("norm(" + zero2 + ") = " + zero2.norm());
         // 求 vec1 vec2 的单位向量
-        System.out.println("normalize " + vec1.print() + " is " + vec1.normalize().print());
-        System.out.println("normalize " + vec2.print() + " is " + vec2.normalize().print());
+        System.out.println("normalize " + vec1 + " is " + vec1.normalize());
+        System.out.println("normalize " + vec2 + " is " + vec2.normalize());
         // 测试 vec1 vec2 的单位向量的模是否为1
         System.out.println(vec1.normalize().norm());
         System.out.println(vec2.normalize().norm());
         //求零向量的模
         try {
-            System.out.println(zero2.normalize().print());
+            System.out.println(zero2.normalize());
         } catch (ZeroDivisionError error) {
-            System.out.println("Cannot normalize zero vector {" + zero2.print() + "}");
+            System.out.println("Cannot normalize zero vector {" + zero2 + "}");
         }
     }
 

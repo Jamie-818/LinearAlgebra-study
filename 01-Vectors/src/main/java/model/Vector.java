@@ -3,7 +3,6 @@ package model;
 import exception.VectorLengthError;
 import exception.ZeroDivisionError;
 
-
 /**
  * 向量对象
  * @author show
@@ -15,7 +14,7 @@ public class Vector {
     private static final double EPSILON = 1e-8;
 
     /**
-     * 私有构造函数
+     * 构造函数
      * 根据向量数值数量
      * @author show
      */
@@ -100,10 +99,11 @@ public class Vector {
     }
 
     /**
-     * 打印向量
+     * 输出向量
      * @author show
      */
-    public String print() {
+    @Override
+    public String toString() {
 
         StringBuilder str = new StringBuilder();
         str.append("(");
@@ -117,8 +117,6 @@ public class Vector {
         str.append(")");
         return str.toString();
     }
-
-
 
     /**
      * 复制一个 Vector 防止污染源对象
