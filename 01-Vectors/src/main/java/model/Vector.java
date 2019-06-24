@@ -258,7 +258,6 @@ public class Vector {
     public Vector pos() {
 
         return copy(self);
-
     }
 
     /**
