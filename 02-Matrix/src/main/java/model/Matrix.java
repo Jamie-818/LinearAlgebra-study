@@ -1,5 +1,7 @@
 package model;
 
+import java.util.Arrays;
+
 /**
  * 矩阵
  * @author show
@@ -47,6 +49,21 @@ public class Matrix {
 
     /**
      * 构造函数
+     * 根据行列长度
+     * @author show
+     */
+    public Matrix(int rowNum, int colNum) {
+
+        if (rowNum < 1 || colNum < 0) {
+            throw new RuntimeException("行列不能小于0");
+        }
+        //这里如果用object数组，就会出现null，你要重新每个赋值为0，那不如直接用int;
+        int[][] ints = new int[rowNum][colNum];
+        self = new Matrix(ints).self;
+    }
+
+    /**
+     * 构造函数
      * @author show
      */
     private Matrix(Object[]... rSelf) {
@@ -60,6 +77,19 @@ public class Matrix {
             }
             System.arraycopy(rSelf[i], 0, self[i], 0, rSelf[i].length);
         }
+
+    }
+
+    /**
+     * 零矩阵
+     * @author show
+     * @param rowNum 行数
+     * @param colNum 列数
+     * @return model.Matrix
+     */
+    public static Matrix zero(int rowNum, int colNum) {
+
+        return new Matrix(rowNum, colNum);
 
     }
 
@@ -207,4 +237,107 @@ public class Matrix {
             return d;
         }
     }
+
+    /*矩阵的基本元素*/
+
+    /**
+     * 矩阵加法
+     * @author show
+     * @param matrix1 矩阵1
+     * @param matrix2 矩阵2
+     * @return model.Matrix
+     */
+    public static Matrix add(Matrix matrix1, Matrix matrix2) {
+
+        int rowNum = matrix1.rowNum();
+        int colNum = matrix1.colNum();
+        if (!Arrays.equals(matrix1.shape(), matrix2.shape())) {
+            throw new RuntimeException("两个矩阵不一致");
+        }
+        Matrix newMatrix = new Matrix(rowNum, colNum);
+        for (int i = 0; i < rowNum; i++) {
+            for (int i1 = 0; i1 < colNum; i1++) {
+                newMatrix.self[i][i1] = doubleIsInt(Double.parseDouble(matrix1.self[i][i1].toString()) + Double.parseDouble(matrix2.self[i][i1].toString()));
+            }
+        }
+        return newMatrix;
+    }
+
+    /**
+     * 矩阵减法
+     * @author show
+     * @param matrix1 矩阵1
+     * @param matrix2 矩阵2
+     * @return model.Matrix
+     */
+    public static Matrix sub(Matrix matrix1, Matrix matrix2) {
+
+        int rowNum = matrix1.rowNum();
+        int colNum = matrix1.colNum();
+        if (!Arrays.equals(matrix1.shape(), matrix2.shape())) {
+            throw new RuntimeException("两个矩阵不一致");
+        }
+        Matrix newMatrix = new Matrix(rowNum, colNum);
+        for (int i = 0; i < rowNum; i++) {
+            for (int i1 = 0; i1 < colNum; i1++) {
+                newMatrix.self[i][i1] = doubleIsInt(Double.parseDouble(matrix1.self[i][i1].toString()) - Double.parseDouble(matrix2.self[i][i1].toString()));
+            }
+        }
+        return newMatrix;
+    }
+
+    /**
+     * 矩阵数量乘法
+     * @author show
+     * @param k 数量系数
+     * @return model.Matrix
+     */
+    public Matrix mul(int k) {
+
+        int rowNum = self.length;
+        int colNum = self[0].length;
+        Matrix newMatrix = new Matrix(rowNum, colNum);
+        for (int i = 0; i < rowNum; i++) {
+            for (int i1 = 0; i1 < colNum; i1++) {
+                newMatrix.self[i][i1] = doubleIsInt(Double.parseDouble(self[i][i1].toString()) * k);
+            }
+        }
+        return newMatrix;
+    }
+
+    /**
+     * 矩阵数量除法
+     * @author show
+     * @param k 数量系数
+     * @return model.Matrix
+     */
+    public Matrix truediv(int k) {
+
+        if (k == 0) {
+            throw new RuntimeException("被除数不能为0");
+        }
+        // n/m = n * (1/m)
+        return new Matrix(self).mul(1 / k);
+    }
+
+    /**
+     * 返回矩阵取正结果
+     * @author show
+     * @return model.Matrix
+     */
+    public Matrix pos() {
+
+        return new Matrix(self);
+    }
+
+    /**
+     * 返回矩阵取负结果
+     * @author show
+     * @return model.Matrix
+     */
+    public Matrix neg() {
+
+        return new Matrix(self).mul(-1);
+    }
+
 }

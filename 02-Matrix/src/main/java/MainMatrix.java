@@ -40,6 +40,16 @@ public class MainMatrix {
      * @author show
      */
     private static void matrixMain2() {
+        //矩阵加法
+        System.out.println("add: " + Matrix.add(matrix1, matrix2));
+        //矩阵减法
+        System.out.println("subtract: " + Matrix.sub(matrix1, matrix2));
+        //矩阵数量乘法
+        System.out.println("scalar-mul: " + matrix1.mul(2));
+        //矩阵取负
+        System.out.println("neg: " + matrix1.neg());
+        //零矩阵(2 * 3)
+        System.out.println("zero_2_3: " + Matrix.zero(2, 3));
 
     }
 }
