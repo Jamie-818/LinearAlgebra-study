@@ -1,5 +1,7 @@
 package model;
 
+import utils.DoubleUtils;
+
 import java.util.Arrays;
 
 /**
@@ -8,11 +10,6 @@ import java.util.Arrays;
  */
 public class Matrix {
     private Object[][] self;
-
-    public void setSelf(Object[][] self) {
-
-        this.self = self;
-    }
 
     /**
      * 构造函数
@@ -112,7 +109,7 @@ public class Matrix {
             sb.append("[");
             int cowLength = self[row].length;
             for (int cow = 0; cow < cowLength; cow++) {
-                sb.append(doubleIsInt(Double.parseDouble(self[row][cow].toString())));
+                sb.append(DoubleUtils.doubleIsInt(Double.parseDouble(self[row][cow].toString())));
                 if (cow < cowLength - 1) {
                     sb.append(",");
                 }
@@ -187,7 +184,7 @@ public class Matrix {
             throw new RuntimeException("矩形下标越界");
         }
 
-        return doubleIsInt(Double.parseDouble(this.self[rowNum][colNum].toString()));
+        return DoubleUtils.doubleIsInt(Double.parseDouble(this.self[rowNum][colNum].toString()));
     }
 
     /**
@@ -228,41 +225,28 @@ public class Matrix {
 
     }
 
-    /**
-     * 判断double是否没小数，是的话，返回int，否则返回自身
-     * @author show
-     * @param d 入参
-     * @return java.lang.Object
-     */
-    private static Object doubleIsInt(Double d) {
 
-        if (d % 1 == 0) {
-            return d.intValue();
-        } else {
-            return d;
-        }
-    }
 
     /*矩阵的基本元素*/
 
     /**
      * 矩阵加法
      * @author show
-     * @param matrix1 矩阵1
-     * @param matrix2 矩阵2
+     * @param ma 矩阵1
+     * @param mb 矩阵2
      * @return model.Matrix
      */
-    public static Matrix add(Matrix matrix1, Matrix matrix2) {
+    public static Matrix add(Matrix ma, Matrix mb) {
 
-        int rowNum = matrix1.rowNum();
-        int colNum = matrix1.colNum();
-        if (!Arrays.equals(matrix1.shape(), matrix2.shape())) {
+        int rowNum = ma.rowNum();
+        int colNum = ma.colNum();
+        if (!Arrays.equals(ma.shape(), mb.shape())) {
             throw new RuntimeException("两个矩阵不一致");
         }
         Matrix newMatrix = new Matrix(rowNum, colNum);
         for (int i = 0; i < rowNum; i++) {
             for (int i1 = 0; i1 < colNum; i1++) {
-                newMatrix.self[i][i1] = doubleIsInt(Double.parseDouble(matrix1.self[i][i1].toString()) + Double.parseDouble(matrix2.self[i][i1].toString()));
+                newMatrix.self[i][i1] = DoubleUtils.doubleIsInt(Double.parseDouble(ma.self[i][i1].toString()) + Double.parseDouble(mb.self[i][i1].toString()));
             }
         }
         return newMatrix;
@@ -271,21 +255,21 @@ public class Matrix {
     /**
      * 矩阵减法
      * @author show
-     * @param matrix1 矩阵1
-     * @param matrix2 矩阵2
+     * @param ma 矩阵1
+     * @param mb 矩阵2
      * @return model.Matrix
      */
-    public static Matrix sub(Matrix matrix1, Matrix matrix2) {
+    public static Matrix sub(Matrix ma, Matrix mb) {
 
-        int rowNum = matrix1.rowNum();
-        int colNum = matrix1.colNum();
-        if (!Arrays.equals(matrix1.shape(), matrix2.shape())) {
+        int rowNum = ma.rowNum();
+        int colNum = ma.colNum();
+        if (!Arrays.equals(ma.shape(), mb.shape())) {
             throw new RuntimeException("两个矩阵不一致");
         }
         Matrix newMatrix = new Matrix(rowNum, colNum);
         for (int i = 0; i < rowNum; i++) {
             for (int i1 = 0; i1 < colNum; i1++) {
-                newMatrix.self[i][i1] = Double.parseDouble(matrix1.self[i][i1].toString()) - Double.parseDouble(matrix2.self[i][i1].toString());
+                newMatrix.self[i][i1] = Double.parseDouble(ma.self[i][i1].toString()) - Double.parseDouble(mb.self[i][i1].toString());
             }
         }
         return newMatrix;
@@ -349,17 +333,17 @@ public class Matrix {
      * 矩阵和向量的点乘
      * @author show
      */
-    public static Vector dot(Matrix matrix, Vector vec) {
+    public static Vector dot(Matrix mat, Vector vec) {
 
         int vecLength = vec.length();
-        int colNum = matrix.colNum();
+        int colNum = mat.colNum();
         if (colNum != vecLength) {
             throw new RuntimeException("矩阵的列数不等于向量的长度");
         }
         double[] self = new double[vecLength];
         for (int i = 0; i < colNum; i++) {
 
-            self[i] = Double.parseDouble(Vector.dot(matrix.colVector(i), vec).toString());
+            self[i] = Double.parseDouble(Vector.dot(mat.colVector(i), vec).toString());
 
         }
         return new Vector(self);
@@ -369,18 +353,18 @@ public class Matrix {
      * 矩阵和矩阵的点乘
      * @author show
      */
-    public static Matrix dot(Matrix matrix1, Matrix matrix2) {
+    public static Matrix dot(Matrix ma, Matrix mb) {
         //矩阵A的列数必须等于矩阵B的行数
-        if (matrix1.colNum() != matrix2.rowNum()) {
+        if (ma.colNum() != mb.rowNum()) {
             throw new RuntimeException("矩阵A的列数必须等于矩阵B的行数");
         }
-        int matrix1RowNum = matrix1.rowNum();
-        int matrix2ColNum = matrix2.colNum();
+        int matrix1RowNum = ma.rowNum();
+        int matrix2ColNum = mb.colNum();
         //矩阵A的行向量和矩阵B的列向量的点乘;
         Object[][] dot = new Object[matrix1RowNum][matrix2ColNum];
         for (int i = 0; i < matrix1RowNum; i++) {
             for (int j = 0; j < matrix2ColNum; j++) {
-                dot[i][j] = doubleIsInt(Double.parseDouble(Vector.dot(matrix1.rowVector(i), matrix2.colVector(j)).toString()));
+                dot[i][j] = DoubleUtils.doubleIsInt(Double.parseDouble(Vector.dot(ma.rowVector(i), mb.colVector(j)).toString()));
             }
         }
         return new Matrix(dot);
@@ -422,13 +406,14 @@ public class Matrix {
     @Override
     public boolean equals(Object o) {
 
-        if (this == o) return true;
-        if (!(o instanceof Matrix)) return false;
-
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Matrix)) {
+            return false;
+        }
         Matrix matrix = (Matrix) o;
-
         return Arrays.deepEquals(self, matrix.self);
-
     }
 
     @Override
