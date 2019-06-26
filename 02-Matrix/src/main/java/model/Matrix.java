@@ -9,6 +9,11 @@ import java.util.Arrays;
 public class Matrix {
     private Object[][] self;
 
+    public void setSelf(Object[][] self) {
+
+        this.self = self;
+    }
+
     /**
      * 构造函数
      * @author show
@@ -107,7 +112,7 @@ public class Matrix {
             sb.append("[");
             int cowLength = self[row].length;
             for (int cow = 0; cow < cowLength; cow++) {
-                sb.append(self[row][cow]);
+                sb.append(doubleIsInt(Double.parseDouble(self[row][cow].toString())));
                 if (cow < cowLength - 1) {
                     sb.append(",");
                 }
@@ -280,7 +285,7 @@ public class Matrix {
         Matrix newMatrix = new Matrix(rowNum, colNum);
         for (int i = 0; i < rowNum; i++) {
             for (int i1 = 0; i1 < colNum; i1++) {
-                newMatrix.self[i][i1] = doubleIsInt(Double.parseDouble(matrix1.self[i][i1].toString()) - Double.parseDouble(matrix2.self[i][i1].toString()));
+                newMatrix.self[i][i1] = Double.parseDouble(matrix1.self[i][i1].toString()) - Double.parseDouble(matrix2.self[i][i1].toString());
             }
         }
         return newMatrix;
@@ -299,7 +304,7 @@ public class Matrix {
         Matrix newMatrix = new Matrix(rowNum, colNum);
         for (int i = 0; i < rowNum; i++) {
             for (int i1 = 0; i1 < colNum; i1++) {
-                newMatrix.self[i][i1] = doubleIsInt(Double.parseDouble(self[i][i1].toString()) * k);
+                newMatrix.self[i][i1] = Double.parseDouble(self[i][i1].toString()) * k;
             }
         }
         return newMatrix;
@@ -338,6 +343,98 @@ public class Matrix {
     public Matrix neg() {
 
         return new Matrix(self).mul(-1);
+    }
+
+    /**
+     * 矩阵和向量的点乘
+     * @author show
+     */
+    public static Vector dot(Matrix matrix, Vector vec) {
+
+        int vecLength = vec.length();
+        int colNum = matrix.colNum();
+        if (colNum != vecLength) {
+            throw new RuntimeException("矩阵的列数不等于向量的长度");
+        }
+        double[] self = new double[vecLength];
+        for (int i = 0; i < colNum; i++) {
+
+            self[i] = Double.parseDouble(Vector.dot(matrix.colVector(i), vec).toString());
+
+        }
+        return new Vector(self);
+    }
+
+    /**
+     * 矩阵和矩阵的点乘
+     * @author show
+     */
+    public static Matrix dot(Matrix matrix1, Matrix matrix2) {
+        //矩阵A的列数必须等于矩阵B的行数
+        if (matrix1.colNum() != matrix2.rowNum()) {
+            throw new RuntimeException("矩阵A的列数必须等于矩阵B的行数");
+        }
+        int matrix1RowNum = matrix1.rowNum();
+        int matrix2ColNum = matrix2.colNum();
+        //矩阵A的行向量和矩阵B的列向量的点乘;
+        Object[][] dot = new Object[matrix1RowNum][matrix2ColNum];
+        for (int i = 0; i < matrix1RowNum; i++) {
+            for (int j = 0; j < matrix2ColNum; j++) {
+                dot[i][j] = doubleIsInt(Double.parseDouble(Vector.dot(matrix1.rowVector(i), matrix2.colVector(j)).toString()));
+            }
+        }
+        return new Matrix(dot);
+    }
+
+    /**
+     * 矩阵的转置(行变列，列变行)
+     * @author show
+     * @return model.Matrix
+     */
+    public Matrix t() {
+
+        int rowNum = this.rowNum();
+        int colNum = this.colNum();
+        Object[][] self = new Object[colNum][rowNum];
+        for (int i = 0; i < rowNum; i++) {
+            for (int j = 0; j < colNum; j++) {
+                self[j][i] = this.getItem(i, j);
+            }
+        }
+        return new Matrix(self);
+
+    }
+
+    /**
+     * 矩阵的二次幂
+     * @author xuanweiyao
+     * @date 16:25 2019-06-26
+     * @param matrix
+     * @return model.Matrix
+     */
+    public static Matrix square(Matrix matrix
+    ) {
+
+        return Matrix.dot(matrix, matrix);
+
+    }
+
+    @Override
+    public boolean equals(Object o) {
+
+        if (this == o) return true;
+        if (!(o instanceof Matrix)) return false;
+
+        Matrix matrix = (Matrix) o;
+
+        return Arrays.deepEquals(self, matrix.self);
+
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Arrays.deepHashCode(self);
     }
 
 }

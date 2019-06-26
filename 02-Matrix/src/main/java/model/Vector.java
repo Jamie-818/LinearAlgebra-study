@@ -7,6 +7,7 @@ import exception.ZeroDivisionError;
  * 向量对象
  * @author show
  */
+
 public class Vector {
     /**向量的底层结构*/
     private Object[] self;
@@ -109,7 +110,7 @@ public class Vector {
         str.append("(");
         int selfLength = self.length;
         for (int i = 0; i < selfLength; i++) {
-            str.append(self[i]);
+            str.append(doubleIsInt(Double.parseDouble(self[i].toString())));
             if (i < selfLength - 1) {
                 str.append(",");
             }
@@ -194,7 +195,7 @@ public class Vector {
         Vector copyVec = copy(self);
         Object[] copyVecSelf = copyVec.self;
         for (int i = 0; i < copyVec.length(); i++) {
-            copyVecSelf[i] = doubleIsInt((Double.parseDouble(copyVecSelf[i].toString())) / k);
+            copyVecSelf[i] = (Double.parseDouble(copyVecSelf[i].toString())) / k;
         }
         return copyVec;
     }
@@ -269,7 +270,7 @@ public class Vector {
 
         Vector vec = copy(self);
         for (int i = 0; i < vec.length(); i++) {
-            vec.self[i] = doubleIsInt((Double.parseDouble(self[i].toString())) * -1);
+            vec.self[i] = (Double.parseDouble(self[i].toString())) * -1;
         }
         return vec;
     }
