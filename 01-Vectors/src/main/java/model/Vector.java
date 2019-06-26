@@ -2,6 +2,7 @@ package model;
 
 import exception.VectorLengthError;
 import exception.ZeroDivisionError;
+import utils.DoubleUtils;
 
 /**
  * 向量对象
@@ -45,7 +46,7 @@ public class Vector {
 
         self = new Object[numbers.length];
         for (int i = 0; i < numbers.length; i++) {
-            this.self[i] = doubleIsInt(numbers[i]);
+            this.self[i] = DoubleUtils.doubleIsInt(numbers[i]);
         }
     }
 
@@ -85,21 +86,6 @@ public class Vector {
     }
 
     /**
-     * 判断double是否没小数，是的话，返回int，否则返回自身
-     * @author show
-     * @param d 入参
-     * @return java.lang.Object
-     */
-    private static Object doubleIsInt(Double d) {
-
-        if (d % 1 == 0) {
-            return d.intValue();
-        } else {
-            return d;
-        }
-    }
-
-    /**
      * 输出向量
      * @author show
      */
@@ -110,7 +96,7 @@ public class Vector {
         str.append("(");
         int selfLength = self.length;
         for (int i = 0; i < selfLength; i++) {
-            str.append(doubleIsInt(Double.parseDouble(self[i].toString())));
+            str.append(DoubleUtils.doubleIsInt(Double.parseDouble(self[i].toString())));
             if (i < selfLength - 1) {
                 str.append(",");
             }
@@ -145,7 +131,7 @@ public class Vector {
         Vector vector = new Vector(vec1Size);
         for (int i = 0; i < vec1Size; i++) {
             double count = Double.parseDouble(vec1.self[i].toString()) + Double.parseDouble(vec2.self[i].toString());
-            vector.self[i] = doubleIsInt(count);
+            vector.self[i] = DoubleUtils.doubleIsInt(count);
         }
         return vector;
     }
@@ -164,7 +150,7 @@ public class Vector {
         Vector vector = new Vector(vec1Size);
         for (int i = 0; i < vec1Size; i++) {
             double count = Double.parseDouble(vec1.self[i].toString()) - Double.parseDouble(vec2.self[i].toString());
-            vector.self[i] = doubleIsInt(count);
+            vector.self[i] = DoubleUtils.doubleIsInt(count);
         }
         return vector;
     }
@@ -178,7 +164,7 @@ public class Vector {
         Vector copyVec = copy(self);
         Object[] copyVecSelf = copyVec.self;
         for (int i = 0; i < copyVec.length(); i++) {
-            copyVecSelf[i] = doubleIsInt((Double.parseDouble(copyVecSelf[i].toString())) * k);
+            copyVecSelf[i] = DoubleUtils.doubleIsInt((Double.parseDouble(copyVecSelf[i].toString())) * k);
         }
         return copyVec;
     }
@@ -249,7 +235,7 @@ public class Vector {
             count += Double.parseDouble(vec1.self[i].toString()) * Double.parseDouble(vec2.self[i].toString());
 
         }
-        return doubleIsInt(count);
+        return DoubleUtils.doubleIsInt(count);
     }
 
     /**
